@@ -112,6 +112,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .ww-bar.ww-on{background:var(--color-bg)}
 .ww-bar.ww-on .ww-lab{font-weight:var(--cds-font-weight-medium)}
 .ww-rate{font-weight:var(--cds-font-weight-medium)}
+.ww-disk-yes{color:var(--color-ok);white-space:nowrap}
+.ww-disk-no{color:var(--color-fg-muted)}
 </style>
 <div class="ww">
   <header id="top">
@@ -140,6 +142,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
         <label>Year to<input type="number" id="p-y2" inputmode="numeric" placeholder="Any"></label>
         <label>Max runtime (min)<input type="number" id="p-rt" inputmode="numeric" placeholder="Any"></label>
         <label>Min IMDb rating<input type="number" id="p-imdb" step="0.1" placeholder="Any"></label>
+        <label>In my folders<select id="p-disk" data-source="disk"><option value="">Any</option><option value="yes">Yes – on disk</option><option value="no">No – not on disk</option></select></label>
         <label class="ww-check"><input type="checkbox" id="p-rated"> Directors Paris has rated</label>
         <div class="ww-row"><button class="ww-btn" id="p-reset">Reset filters</button></div>
       </div>
@@ -147,8 +150,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="ww-card" id="picker" data-source="watchlist fit">
       <div class="ww-row" style="justify-content:space-between">
-        <div><h2>Can't decide?</h2><p class="ww-note" style="margin:0">Draws one film from the best-fitting titles that match the filters.</p></div>
-        <button class="ww-btn ww-primary" id="pick-btn">Pick for me</button>
+        <div><h2>Can't decide?</h2><p class="ww-note" style="margin:0">Draws one film from the best-fitting titles that match the filters, optionally only from films in your folders.</p></div>
+        <div class="ww-row"><label class="ww-row" style="gap:6px;font-size:var(--cds-font-size-body)"><input type="checkbox" id="pick-disk" checked> Only films in my folders</label><button class="ww-btn ww-primary" id="pick-btn">Pick for me</button></div>
       </div>
       <div class="ww-pick" id="pick-out" hidden style="margin-top:var(--cds-gap-md)">
         <a class="ww-pick-title" id="pick-title" target="_blank" rel="noopener"></a>
@@ -172,7 +175,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 
     <div class="ww-card" id="list">
       <h2>Watchlist</h2>
-      <p class="ww-note">Fit estimates how Paris would rate a film on his 1–10 scale, from how he rated the same directors, director nationalities and genres. Click a header to sort. A <span style="color:var(--color-warn)">?</span> marks a country or nationality not confirmed.</p>
+      <p class="ww-note">Fit estimates how Paris would rate a film on his 1–10 scale, from how he rated the same directors, director nationalities and genres. Click a header to sort. A <span style="color:var(--color-warn)">?</span> marks a country or nationality not confirmed. "In my folders" says whether the film is on E:\02 movies or F:\02 movies, and in which folder.</p>
       <div class="ww-tablebox">
         <table class="ww-table" id="p-tbl" data-source="watchlist" data-row-key="Const">
           <thead><tr>
@@ -184,6 +187,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
             <th data-field="Genres" class="ww-hide"><button data-k="Genres">Genres</button></th>
             <th data-field="Runtime (mins)" class="ww-num ww-hide"><button data-k="rt">Min</button></th>
             <th data-field="IMDb rating" class="ww-num"><button data-k="imdb">IMDb</button></th>
+            <th data-source="disk" data-field="In my folders"><button data-k="disk">In my folders</button></th>
             <th data-source="fit" data-field="Fit" class="ww-num"><button data-k="Fit">Fit</button></th>
             <th data-source="fit" data-field="Why" class="ww-hide"><button data-k="Why">Why</button></th>
           </tr></thead>
@@ -215,6 +219,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
         <label>Year to<input type="number" id="t-y2" inputmode="numeric" placeholder="Any"></label>
         <label>Max runtime (min)<input type="number" id="t-rt" inputmode="numeric" placeholder="Any"></label>
         <label>Min IMDb rating<input type="number" id="t-imdb" step="0.1" placeholder="Any"></label>
+        <label>In my folders<select id="t-disk" data-source="disk"><option value="">Any</option><option value="yes">Yes – on disk</option><option value="no">No – not on disk</option></select></label>
         <label>Paris's rating at least<select id="t-min"><option value="">Any</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select></label>
         <div class="ww-row"><button class="ww-btn" id="t-reset">Reset filters</button></div>
       </div>
@@ -253,6 +258,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
             <th data-field="Genres" class="ww-hide"><button data-k="Genres">Genres</button></th>
             <th data-field="Runtime (mins)" class="ww-num ww-hide"><button data-k="rt">Min</button></th>
             <th data-field="IMDb rating" class="ww-num"><button data-k="imdb">IMDb</button></th>
+            <th data-source="disk" data-field="In my folders"><button data-k="disk">In my folders</button></th>
             <th data-field="Your rating" class="ww-num"><button data-k="mine">Paris</button></th>
           </tr></thead>
           <tbody></tbody>
@@ -260,7 +266,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
     </div>
   </section>
-  <footer class="ww-foot">Built from Paris’s IMDb watchlist and the films he has rated, as of 13 October 2026. Countries of production and directors’ nationalities were compiled with Claude; a <span style="color:var(--color-warn)">?</span> marks one that couldn’t be confirmed. “Fit” is an estimate of how Paris would rate a film, based on his past ratings. Titles link to IMDb.</footer>
+  <footer class="ww-foot">Built from Paris’s IMDb watchlist and the films he has rated, as of 30 October 2026. Countries of production and directors’ nationalities were compiled with Claude; a <span style="color:var(--color-warn)">?</span> marks one that couldn’t be confirmed. “Fit” is an estimate of how Paris would rate a film, based on his past ratings. “In my folders” shows whether a film is in Paris’s own film collection. Titles link to IMDb.</footer>
 </div>
 </div>
 <script type="text/csv" id="data-watchlist">
@@ -2658,6 +2664,811 @@ tt0440963,The Bourne Ultimatum,Movie,2007,2000s,https://www.imdb.com/title/tt044
 tt0361748,Inglourious Basterds,Movie,2009,2000s,https://www.imdb.com/title/tt0361748,153,Quentin Tarantino,United States,North America,United States; Germany,North America; Europe,"War, Drama",6,8.4,2017-08-06,
 tt0301357,Good Bye Lenin!,Movie,2003,2000s,https://www.imdb.com/title/tt0301357,121,Wolfgang Becker,Germany,Europe,Germany,Europe,"Romance, Comedy, Drama",8,7.7,2017-08-06,
 </script>
+<script type="text/csv" id="data-folders">
+Const,In my folders,Folder
+tt0013442,Yes,not seen
+tt0017136,Yes,not seen
+tt0018742,Yes,not seen
+tt0021749,Yes,not seen
+tt0023634,Yes,not seen
+tt0026778,Yes,not seen
+tt0028772,Yes,not seen
+tt0031885,Yes,not seen
+tt0036112,Yes,not seen
+tt0037558,Yes,not seen
+tt0037884,Yes,not seen
+tt0038823,Yes,not seen
+tt0038890,Yes,not seen
+tt0039417,Yes,not seen
+tt0039822,Yes,not seen
+tt0040522,Yes,seen + not seen
+tt0040525,Yes,not seen
+tt0042593,Yes,not seen
+tt0042876,Yes,not seen
+tt0043014,Yes,not seen
+tt0043313,Yes,not seen
+tt0043511,Yes,not seen
+tt0046438,Yes,not seen
+tt0046478,Yes,not seen
+tt0046487,Yes,not seen
+tt0048254,Yes,not seen
+tt0048424,Yes,not seen
+tt0048434,Yes,not seen
+tt0048452,Yes,not seen
+tt0048473,Yes,not seen
+tt0048956,Yes,not seen
+tt0049012,Yes,not seen
+tt0049784,Yes,not seen
+tt0049902,Yes,seen
+tt0050083,Yes,not seen
+tt0050212,Yes,not seen
+tt0050706,Yes,not seen
+tt0050783,Yes,not seen
+tt0050825,Yes,not seen
+tt0050976,Yes,not seen
+tt0050986,Yes,not seen
+tt0051378,Yes,not seen
+tt0051459,Yes,not seen
+tt0052080,Yes,not seen
+tt0052216,Yes,not seen
+tt0052572,Yes,not seen
+tt0052893,Yes,not seen
+tt0053121,Yes,not seen
+tt0053125,Yes,not seen
+tt0053134,Yes,not seen
+tt0053168,Yes,seen + not seen
+tt0053198,Yes,not seen
+tt0053318,Yes,not seen
+tt0053472,Yes,not seen
+tt0053604,Yes,seen
+tt0053619,Yes,not seen
+tt0054130,Yes,not seen
+tt0054215,Yes,not seen
+tt0054248,Yes,not seen
+tt0054331,Yes,seen
+tt0054460,Yes,not seen
+tt0054665,Yes,not seen
+tt0055032,Yes,not seen
+tt0055913,Yes,not seen
+tt0056111,Yes,not seen
+tt0056193,Yes,seen
+tt0056291,Yes,seen
+tt0056512,Yes,not seen
+tt0056663,Yes,not seen
+tt0057012,Yes,seen
+tt0057091,Yes,not seen
+tt0057187,Yes,not seen
+tt0057565,Yes,not seen
+tt0057578,Yes,not seen
+tt0057590,Yes,not seen
+tt0057935,Yes,not seen
+tt0058715,Yes,not seen
+tt0058946,Yes,not seen
+tt0058985,Yes,seen
+tt0059050,Yes,not seen
+tt0059415,Yes,seen + not seen
+tt0059592,Yes,not seen
+tt0059646,Yes,not seen
+tt0060107,Yes,seen
+tt0060161,Yes,not seen
+tt0060176,Yes,seen
+tt0060472,Yes,not seen
+tt0060802,Yes,not seen
+tt0060827,Yes,not seen
+tt0061184,Yes,not seen
+tt0061395,Yes,not seen
+tt0061512,Yes,not seen
+tt0061537,Yes,not seen
+tt0061578,Yes,seen + not seen
+tt0061589,Yes,not seen
+tt0061781,Yes,seen
+tt0061809,Yes,not seen
+tt0061882,Yes,not seen
+tt0062136,Yes,not seen
+tt0062229,Yes,not seen
+tt0062322,Yes,not seen
+tt0062480,Yes,not seen
+tt0062622,Yes,seen
+tt0062952,Yes,seen
+tt0063198,Yes,not seen
+tt0063278,Yes,not seen
+tt0063291,Yes,not seen
+tt0063374,Yes,seen
+tt0063415,Yes,seen
+tt0063633,Yes,not seen
+tt0063850,Yes,not seen
+tt0064106,Yes,not seen
+tt0064115,Yes,not seen
+tt0064541,Yes,seen
+tt0064612,Yes,not seen
+tt0064861,Yes,not seen
+tt0064921,Yes,not seen
+tt0065234,Yes,seen
+tt0065439,Yes,seen + not seen
+tt0065466,Yes,not seen
+tt0065571,Yes,seen
+tt0065724,Yes,not seen
+tt0065772,Yes,not seen
+tt0065867,Yes,not seen
+tt0066773,Yes,seen
+tt0066892,Yes,not seen
+tt0066921,Yes,seen
+tt0067805,Yes,not seen
+tt0067959,Yes,not seen
+tt0068361,Yes,not seen
+tt0068375,Yes,not seen
+tt0068569,Yes,seen
+tt0069035,Yes,not seen
+tt0069293,Yes,not seen
+tt0069400,Yes,not seen
+tt0069687,Yes,seen
+tt0069762,Yes,seen
+tt0069995,Yes,not seen
+tt0070040,Yes,not seen
+tt0070290,Yes,seen
+tt0070359,Yes,not seen
+tt0070959,Yes,not seen
+tt0071315,Yes,seen
+tt0071487,Yes,not seen
+tt0071585,Yes,not seen
+tt0071910,Yes,not seen
+tt0072417,Yes,not seen
+tt0072443,Yes,not seen
+tt0072446,Yes,not seen
+tt0072684,Yes,not seen
+tt0072890,Yes,seen
+tt0072976,Yes,seen
+tt0073540,Yes,not seen
+tt0073580,Yes,not seen
+tt0073800,Yes,not seen
+tt0073802,Yes,not seen
+tt0073918,Yes,not seen
+tt0074119,Yes,not seen
+tt0074686,Yes,not seen
+tt0074749,Yes,seen
+tt0074811,Yes,not seen
+tt0074891,Yes,not seen
+tt0074896,Yes,not seen
+tt0075040,Yes,not seen
+tt0075404,Yes,not seen
+tt0075467,Yes,not seen
+tt0075612,Yes,not seen
+tt0075675,Yes,seen
+tt0075902,Yes,not seen
+tt0076085,Yes,seen
+tt0076391,Yes,not seen
+tt0076452,Yes,not seen
+tt0077613,Yes,not seen
+tt0078754,Yes,not seen
+tt0078788,Yes,seen
+tt0078841,Yes,not seen
+tt0079095,Yes,not seen
+tt0079522,Yes,not seen
+tt0079944,Yes,not seen
+tt0080012,Yes,not seen
+tt0080388,Yes,not seen
+tt0080728,Yes,not seen
+tt0080855,Yes,not seen
+tt0081070,Yes,seen
+tt0081505,Yes,not seen
+tt0082081,Yes,not seen
+tt0082269,Yes,not seen
+tt0082671,Yes,not seen
+tt0082736,Yes,not seen
+tt0082783,Yes,not seen
+tt0082979,Yes,not seen
+tt0083089,Yes,not seen
+tt0083549,Yes,not seen
+tt0083658,Yes,seen
+tt0083851,Yes,not seen
+tt0084302,Yes,not seen
+tt0084361,Yes,not seen
+tt0084549,Yes,not seen
+tt0084654,Yes,not seen
+tt0084725,Yes,seen
+tt0085482,Yes,not seen
+tt0085642,Yes,not seen
+tt0085794,Yes,seen
+tt0085809,Yes,not seen + documentaries
+tt0085859,Yes,not seen
+tt0086022,Yes,not seen
+tt0086216,Yes,not seen
+tt0086510,Yes,seen
+tt0087821,Yes,not seen
+tt0087884,Yes,seen
+tt0088846,Yes,not seen
+tt0089603,Yes,not seen
+tt0089606,Yes,not seen
+tt0089960,Yes,not seen
+tt0090095,Yes,not seen
+tt0090756,Yes,not seen
+tt0091251,Yes,seen
+tt0091364,Yes,not seen
+tt0091578,Yes,not seen
+tt0091670,Yes,not seen
+tt0091830,Yes,not seen
+tt0091954,Yes,not seen
+tt0092048,Yes,not seen
+tt0092149,Yes,not seen
+tt0092337,Yes,not seen
+tt0092593,Yes,not seen
+tt0092637,Yes,not seen
+tt0093058,Yes,seen
+tt0093105,Yes,not seen
+tt0093509,Yes,not seen
+tt0094291,Yes,not seen
+tt0094675,Yes,seen
+tt0094799,Yes,seen + not seen
+tt0095174,Yes,not seen
+tt0095250,Yes,seen
+tt0095302,Yes,not seen
+tt0095327,Yes,not seen
+tt0095467,Yes,seen
+tt0095468,Yes,not seen
+tt0095475,Yes,not seen
+tt0095497,Yes,not seen
+tt0095631,Yes,not seen
+tt0096028,Yes,not seen
+tt0096163,Yes,not seen
+tt0096256,Yes,not seen
+tt0096283,Yes,not seen
+tt0096461,Yes,not seen
+tt0096863,Yes,not seen
+tt0096908,Yes,not seen
+tt0097108,Yes,not seen
+tt0097165,Yes,seen
+tt0097216,Yes,not seen
+tt0097223,Yes,not seen
+tt0097561,Yes,seen
+tt0098327,Yes,seen
+tt0098532,Yes,not seen
+tt0099040,Yes,not seen
+tt0099685,Yes,seen
+tt0099818,Yes,not seen
+tt0099951,Yes,not seen
+tt0100024,Yes,not seen
+tt0100491,Yes,not seen
+tt0101258,Yes,not seen
+tt0101410,Yes,not seen
+tt0101898,Yes,not seen
+tt0101985,Yes,not seen
+tt0102443,Yes,not seen
+tt0102494,Yes,not seen
+tt0102851,Yes,not seen
+tt0103176,Yes,seen
+tt0103873,Yes,not seen
+tt0104036,Yes,seen
+tt0104348,Yes,not seen
+tt0104652,Yes,not seen
+tt0104753,Yes,not seen
+tt0104779,Yes,not seen
+tt0105197,Yes,seen + not seen
+tt0105812,Yes,seen
+tt0105888,Yes,not seen
+tt0106307,Yes,not seen
+tt0106332,Yes,not seen
+tt0106677,Yes,not seen
+tt0107048,Yes,not seen
+tt0107376,Yes,not seen
+tt0107472,Yes,not seen
+tt0107630,Yes,seen
+tt0107653,Yes,not seen
+tt0107822,Yes,not seen
+tt0107920,Yes,not seen
+tt0107943,Yes,not seen
+tt0108122,Yes,seen + not seen
+tt0109020,Yes,not seen
+tt0109348,Yes,not seen
+tt0109424,Yes,seen
+tt0109508,Yes,not seen
+tt0109579,Yes,not seen
+tt0110057,Yes,seen
+tt0110296,Yes,not seen
+tt0110361,Yes,not seen
+tt0110877,Yes,seen
+tt0110882,Yes,seen
+tt0110912,Yes,not seen
+tt0111477,Yes,not seen
+tt0111495,Yes,seen
+tt0111845,Yes,not seen
+tt0112471,Yes,seen
+tt0112579,Yes,not seen
+tt0112767,Yes,not seen
+tt0112913,Yes,not seen
+tt0113247,Yes,seen
+tt0114055,Yes,not seen
+tt0114671,Yes,not seen
+tt0114746,Yes,not seen
+tt0115734,Yes,seen
+tt0115895,Yes,not seen
+tt0115940,Yes,not seen
+tt0116041,Yes,seen
+tt0116231,Yes,seen
+tt0116282,Yes,seen
+tt0116767,Yes,not seen
+tt0116922,Yes,not seen
+tt0117589,Yes,not seen
+tt0117771,Yes,seen
+tt0117802,Yes,not seen
+tt0117951,Yes,seen
+tt0117990,Yes,not seen
+tt0118694,Yes,seen
+tt0118715,Yes,seen
+tt0118767,Yes,seen
+tt0118789,Yes,not seen
+tt0118845,Yes,seen
+tt0118849,Yes,not seen
+tt0118929,Yes,not seen
+tt0118954,Yes,not seen
+tt0119038,Yes,not seen
+tt0119167,Yes,not seen
+tt0119361,Yes,not seen
+tt0119472,Yes,not seen
+tt0119485,Yes,not seen
+tt0119488,Yes,seen
+tt0119510,Yes,not seen
+tt0119517,Yes,not seen
+tt0119698,Yes,not seen
+tt0120176,Yes,not seen
+tt0120263,Yes,seen
+tt0120522,Yes,not seen
+tt0120663,Yes,seen
+tt0120684,Yes,not seen
+tt0120735,Yes,seen
+tt0120885,Yes,not seen
+tt0120889,Yes,not seen
+tt0122565,Yes,not seen
+tt0123948,Yes,not seen
+tt0124207,Yes,not seen
+tt0124437,Yes,not seen
+tt0126886,Yes,not seen
+tt0127536,Yes,not seen
+tt0128332,Yes,seen
+tt0128445,Yes,seen
+tt0133363,Yes,not seen
+tt0134119,Yes,seen
+tt0138946,Yes,not seen
+tt0140352,Yes,not seen
+tt0141986,Yes,not seen
+tt0144020,Yes,seen
+tt0144201,Yes,not seen
+tt0144550,Yes,not seen
+tt0147612,Yes,seen
+tt0150662,Yes,seen
+tt0151804,Yes,seen
+tt0154506,Yes,not seen
+tt0156701,Yes,not seen
+tt0157016,Yes,not seen
+tt0165078,Yes,seen
+tt0166896,Yes,not seen
+tt0167400,Yes,not seen
+tt0171433,Yes,not seen
+tt0171685,Yes,not seen
+tt0177507,Yes,seen
+tt0177858,Yes,not seen
+tt0180093,Yes,seen
+tt0188674,Yes,seen
+tt0194314,Yes,not seen
+tt0203119,Yes,not seen
+tt0209463,Yes,not seen
+tt0209933,Yes,not seen
+tt0210065,Yes,not seen
+tt0211445,Yes,not seen
+tt0212826,Yes,not seen
+tt0216625,Yes,not seen
+tt0221073,Yes,not seen
+tt0238883,Yes,seen
+tt0240419,Yes,not seen
+tt0240913,Yes,not seen
+tt0243133,Yes,seen
+tt0244316,Yes,not seen
+tt0245574,Yes,seen
+tt0246677,Yes,not seen
+tt0247199,Yes,not seen
+tt0247586,Yes,seen
+tt0249241,Yes,not seen
+tt0250258,Yes,seen
+tt0250797,Yes,seen
+tt0254463,Yes,not seen
+tt0255094,Yes,not seen
+tt0256103,Yes,seen
+tt0265343,Yes,not seen
+tt0268380,Yes,not seen
+tt0272338,Yes,not seen
+tt0274309,Yes,seen
+tt0274428,Yes,not seen
+tt0276751,Yes,seen
+tt0276919,Yes,seen
+tt0283283,Yes,not seen
+tt0290002,Yes,seen
+tt0290673,Yes,not seen
+tt0292242,Yes,not seen
+tt0293007,Yes,not seen
+tt0293715,Yes,not seen
+tt0300214,Yes,not seen
+tt0301199,Yes,not seen
+tt0302674,Yes,not seen
+tt0309047,Yes,not seen
+tt0309061,Yes,documentaries
+tt0313670,Yes,not seen
+tt0314412,Yes,not seen
+tt0317248,Yes,seen
+tt0318025,Yes,seen
+tt0318202,Yes,not seen
+tt0318462,Yes,seen
+tt0319769,Yes,not seen
+tt0320042,Yes,seen
+tt0320194,Yes,not seen
+tt0320661,Yes,not seen
+tt0322420,Yes,not seen
+tt0322824,Yes,seen
+tt0327056,Yes,not seen
+tt0328844,Yes,not seen
+tt0335266,Yes,seen
+tt0337692,Yes,seen
+tt0338013,Yes,not seen
+tt0342636,Yes,not seen
+tt0342735,Yes,not seen
+tt0343663,Yes,not seen
+tt0343737,Yes,seen
+tt0346094,Yes,seen
+tt0352248,Yes,not seen
+tt0352994,Yes,not seen
+tt0353969,Yes,seen
+tt0355029,Yes,not seen
+tt0361748,Yes,seen
+tt0364569,Yes,seen
+tt0365748,Yes,seen
+tt0366627,Yes,seen + not seen
+tt0368794,Yes,not seen
+tt0369339,Yes,not seen
+tt0371280,Yes,not seen
+tt0372784,Yes,seen
+tt0374153,Yes,not seen
+tt0374900,Yes,not seen
+tt0375063,Yes,seen
+tt0375912,Yes,not seen
+tt0376968,Yes,seen
+tt0377556,Yes,not seen
+tt0380366,Yes,seen
+tt0380485,Yes,not seen
+tt0381061,Yes,seen
+tt0381681,Yes,seen
+tt0383028,Yes,not seen
+tt0384116,Yes,not seen
+tt0385017,Yes,seen
+tt0385705,Yes,seen
+tt0387898,Yes,not seen
+tt0396171,Yes,not seen
+tt0396269,Yes,seen
+tt0401711,Yes,not seen
+tt0402399,Yes,not seen
+tt0405094,Yes,seen
+tt0405422,Yes,not seen
+tt0412080,Yes,not seen
+tt0418110,Yes,seen
+tt0418763,Yes,not seen
+tt0419262,Yes,seen
+tt0419887,Yes,seen
+tt0420509,Yes,not seen
+tt0421082,Yes,seen
+tt0421715,Yes,seen
+tt0422720,Yes,not seen
+tt0424227,Yes,not seen
+tt0424237,Yes,not seen
+tt0424434,Yes,seen
+tt0425112,Yes,not seen
+tt0425458,Yes,seen
+tt0427339,Yes,not seen
+tt0432283,Yes,not seen
+tt0435623,Yes,seen
+tt0435761,Yes,not seen
+tt0440963,Yes,not seen
+tt0441762,Yes,seen
+tt0443272,Yes,seen
+tt0443706,Yes,seen
+tt0443844,Yes,not seen
+tt0445620,Yes,not seen
+tt0446750,Yes,not seen
+tt0449059,Yes,not seen
+tt0459242,Yes,seen + not seen
+tt0460989,Yes,seen
+tt0464029,Yes,not seen
+tt0468569,Yes,seen
+tt0469754,Yes,seen
+tt0476643,Yes,not seen
+tt0476735,Yes,seen + not seen
+tt0478304,Yes,not seen
+tt0485947,Yes,not seen
+tt0488400,Yes,not seen
+tt0488478,Yes,seen
+tt0488905,Yes,not seen
+tt0494222,Yes,not seen
+tt0498329,Yes,not seen
+tt0499101,Yes,not seen
+tt0758758,Yes,seen
+tt0770802,Yes,not seen
+tt0780504,Yes,seen
+tt0780536,Yes,seen + not seen
+tt0787442,Yes,not seen
+tt0787524,Yes,not seen
+tt0806686,Yes,not seen
+tt0807054,Yes,seen
+tt0808417,Yes,seen
+tt0809951,Yes,not seen
+tt0825232,Yes,seen + not seen
+tt0827517,Yes,seen
+tt0838221,Yes,seen
+tt0838233,Yes,not seen
+tt0841044,Yes,seen
+tt0845439,Yes,not seen
+tt0853153,Yes,not seen
+tt0855895,Yes,not seen
+tt0870090,Yes,not seen
+tt0875595,Yes,not seen
+tt0879843,Yes,not seen
+tt0880502,Yes,seen
+tt0887912,Yes,seen
+tt0910936,Yes,not seen
+tt0913425,Yes,seen
+tt0948544,Yes,not seen
+tt0959337,Yes,not seen
+tt0960144,Yes,seen
+tt0964517,Yes,seen
+tt0978762,Yes,not seen
+tt0983213,Yes,seen
+tt0986233,Yes,seen
+tt1000769,Yes,not seen
+tt1010048,Yes,seen
+tt1013753,Yes,seen
+tt1022603,Yes,seen
+tt1023114,Yes,not seen
+tt1024648,Yes,seen
+tt1024964,Yes,not seen
+tt10262648,Yes,seen + not seen
+tt1027718,Yes,seen
+tt10288566,Yes,seen
+tt1032856,Yes,not seen
+tt1037163,Yes,not seen
+tt1038043,Yes,not seen
+tt1049413,Yes,seen
+tt10618286,Yes,not seen
+tt1068646,Yes,not seen
+tt1074638,Yes,seen
+tt1078188,Yes,not seen
+tt10883506,Yes,not seen
+tt1090680,Yes,not seen
+tt1100089,Yes,seen
+tt1107850,Yes,not seen
+tt1110272,Yes,not seen
+tt1119646,Yes,seen
+tt1120985,Yes,seen
+tt1135952,Yes,not seen
+tt1136608,Yes,seen
+tt1139797,Yes,not seen
+tt1142972,Yes,not seen
+tt1155592,Yes,not seen
+tt11559472,Yes,not seen
+tt1157705,Yes,documentaries
+tt1160419,Yes,not seen
+tt1164999,Yes,not seen
+tt1172570,Yes,not seen
+tt1174732,Yes,not seen
+tt1176096,Yes,not seen
+tt11777738,Yes,seen
+tt1178197,Yes,not seen
+tt11813216,Yes,seen
+tt1182345,Yes,not seen
+tt1185616,Yes,seen
+tt1191111,Yes,not seen
+tt1194238,Yes,not seen
+tt1196204,Yes,seen + not seen
+tt1204773,Yes,seen
+tt1223975,Yes,not seen
+tt1224153,Yes,not seen
+tt1226271,Yes,not seen
+tt1226774,Yes,not seen
+tt1232776,Yes,seen
+tt1232826,Yes,not seen
+tt1233334,Yes,not seen
+tt1233381,Yes,not seen
+tt1234654,Yes,seen
+tt12509402,Yes,not seen
+tt1255953,Yes,seen
+tt12680684,Yes,seen
+tt1287878,Yes,not seen
+tt1306980,Yes,not seen
+tt13087796,Yes,not seen
+tt1313092,Yes,seen
+tt1319744,Yes,not seen
+tt1321865,Yes,seen
+tt1322385,Yes,not seen
+tt13231544,Yes,seen
+tt1323594,Yes,not seen
+tt1329457,Yes,not seen
+tt1331025,Yes,not seen
+tt1337051,Yes,not seen
+tt1340107,Yes,seen
+tt1340800,Yes,not seen
+tt1343097,Yes,seen
+tt1369667,Yes,not seen
+tt1371155,Yes,not seen
+tt1374985,Yes,not seen
+tt1376717,Yes,not seen
+tt1379182,Yes,seen
+tt1399683,Yes,not seen
+tt1407927,Yes,not seen
+tt1412386,Yes,seen
+tt1422122,Yes,not seen
+tt1424327,Yes,not seen
+tt1424432,Yes,seen
+tt1431045,Yes,not seen
+tt1440266,Yes,seen
+tt1440292,Yes,seen
+tt1504320,Yes,seen
+tt1517451,Yes,not seen
+tt1532503,Yes,not seen
+tt1540133,Yes,seen
+tt1559549,Yes,not seen
+tt1570989,Yes,seen
+tt1590024,Yes,not seen
+tt1590078,Yes,not seen
+tt1596345,Yes,not seen
+tt1596753,Yes,seen
+tt1600196,Yes,not seen
+tt1600524,Yes,not seen
+tt1613750,Yes,not seen
+tt1645089,Yes,seen
+tt1660302,Yes,not seen
+tt1663321,Yes,not seen
+tt1667905,Yes,not seen
+tt1668191,Yes,not seen
+tt1683526,Yes,not seen
+tt1683876,Yes,not seen
+tt1700845,Yes,not seen
+tt17009710,Yes,seen
+tt1703148,Yes,not seen
+tt1714206,Yes,not seen
+tt1723811,Yes,seen
+tt1726252,Yes,not seen
+tt1736633,Yes,seen
+tt1740047,Yes,not seen
+tt1745787,Yes,seen + not seen
+tt1748122,Yes,seen
+tt1772925,Yes,not seen
+tt1827487,Yes,seen
+tt1832382,Yes,seen
+tt1853728,Yes,seen
+tt1925421,Yes,not seen
+tt1931533,Yes,seen
+tt1935179,Yes,seen
+tt1961675,Yes,not seen
+tt1964624,Yes,seen + not seen
+tt2005151,Yes,not seen
+tt2032557,Yes,not seen
+tt2056771,Yes,seen
+tt2121382,Yes,not seen
+tt2125423,Yes,not seen
+tt21374850,Yes,not seen
+tt2177511,Yes,not seen
+tt2178941,Yes,seen
+tt2187115,Yes,not seen
+tt2190367,Yes,seen
+tt2194499,Yes,not seen
+tt2217859,Yes,not seen
+tt2234003,Yes,not seen
+tt2258281,Yes,not seen
+tt2290397,Yes,not seen
+tt2299954,Yes,not seen
+tt2309788,Yes,not seen
+tt2328922,Yes,not seen
+tt2331143,Yes,not seen
+tt23736044,Yes,not seen
+tt2375605,Yes,not seen
+tt2402927,Yes,seen
+tt2404461,Yes,not seen
+tt2406252,Yes,seen
+tt2427892,Yes,not seen
+tt2431286,Yes,not seen
+tt2466950,Yes,not seen
+tt2567712,Yes,seen
+tt2582782,Yes,not seen
+tt2594950,Yes,not seen
+tt2614684,Yes,seen
+tt26315142,Yes,seen
+tt26440619,Yes,not seen
+tt2649554,Yes,not seen
+tt2692904,Yes,not seen
+tt2741806,Yes,seen
+tt27503384,Yes,seen
+tt2762506,Yes,seen
+tt2800240,Yes,not seen
+tt2852406,Yes,not seen
+tt2915160,Yes,seen
+tt2935476,Yes,not seen
+tt2936884,Yes,not seen
+tt3082854,Yes,seen
+tt3154822,Yes,not seen
+tt3155604,Yes,not seen
+tt3170900,Yes,not seen
+tt3172532,Yes,seen
+tt3409392,Yes,not seen
+tt3416744,Yes,seen
+tt3499096,Yes,not seen
+tt3521126,Yes,seen
+tt3560686,Yes,seen
+tt3616916,Yes,not seen
+tt3652526,Yes,not seen
+tt3704050,Yes,not seen
+tt3707106,Yes,not seen
+tt3741834,Yes,seen
+tt3767372,Yes,not seen
+tt3774694,Yes,seen + not seen
+tt3945988,Yes,seen
+tt4048272,Yes,seen
+tt4226388,Yes,not seen
+tt4374460,Yes,seen
+tt4468740,Yes,not seen
+tt4547938,Yes,not seen
+tt4550098,Yes,not seen
+tt4595882,Yes,not seen
+tt4613272,Yes,not seen
+tt4645368,Yes,not seen
+tt4669986,Yes,not seen
+tt4768776,Yes,not seen
+tt4777584,Yes,not seen
+tt4846232,Yes,not seen
+tt4901306,Yes,not seen
+tt4925292,Yes,not seen
+tt4943594,Yes,not seen
+tt5029608,Yes,not seen
+tt5078214,Yes,not seen
+tt5135336,Yes,not seen
+tt5168192,Yes,not seen
+tt5182856,Yes,not seen
+tt5186714,Yes,seen
+tt5213534,Yes,seen
+tt5221584,Yes,seen
+tt5247022,Yes,seen
+tt5311514,Yes,not seen
+tt5439796,Yes,not seen
+tt5463162,Yes,not seen
+tt5639354,Yes,not seen
+tt5642124,Yes,not seen
+tt5649144,Yes,seen
+tt5657028,Yes,not seen
+tt5723272,Yes,seen
+tt5726616,Yes,seen
+tt5727208,Yes,not seen
+tt5776858,Yes,not seen
+tt5777628,Yes,documentaries
+tt5804038,Yes,not seen
+tt5827916,Yes,not seen
+tt6060964,Yes,not seen
+tt6083534,Yes,seen
+tt6121444,Yes,seen
+tt6212478,Yes,not seen
+tt6304162,Yes,seen
+tt6714534,Yes,not seen
+tt6725014,Yes,seen
+tt6725158,Yes,not seen
+tt6776462,Yes,not seen
+tt6805354,Yes,not seen
+tt7048622,Yes,seen
+tt7303530,Yes,not seen
+tt7322224,Yes,seen
+tt7322718,Yes,not seen
+tt7689964,Yes,not seen
+tt7689966,Yes,not seen
+tt8075192,Yes,seen
+tt8185182,Yes,not seen
+tt8359848,Yes,not seen
+tt8535968,Yes,not seen
+tt8613070,Yes,seen
+tt8946378,Yes,not seen
+tt8963708,Yes,seen
+tt9652782,Yes,not seen
+</script>
 <script>
 /* Stand-in for the Claude dashboard runtime: embedded data, calculated measures, one render. */
 window.dash = (() => {
@@ -2665,6 +3476,8 @@ window.dash = (() => {
     watchlist: d3.csvParse(document.getElementById('data-watchlist').textContent.trim()),
     ratings: d3.csvParse(document.getElementById('data-ratings').textContent.trim()),
   };
+  const fe = document.getElementById('data-folders');
+  if (fe) ds.folders = d3.csvParse(fe.textContent.trim());
   const calcs = [], subs = [];
   return {
     colors: [getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2B57A8'],
@@ -2722,6 +3535,17 @@ dash.calc('taste_genre', {
   },
 });
 
+dash.calc('disk', {
+  inputs: ['watchlist', 'ratings', 'folders'],
+  title: 'In my folders',
+  description: 'For every watchlist and rated title: whether it is in Paris’s movie folders (E: and F: 02 movies) and in which subfolder.',
+  fn: (watchlist, ratings, folders) => {
+    const F = new Map(folders.map((f) => [f.Const, f]));
+    const ids = [...new Set([...watchlist, ...ratings].map((r) => r.Const))];
+    return ids.map((Const) => { const f = F.get(Const); return { Const, 'In my folders': f ? `Yes · ${f.Folder}` : 'No', Drives: f ? (f.Drives || '') : '', Files: f ? (f['File names'] || '') : '' }; });
+  },
+});
+
 dash.calc('fit', {
   inputs: ['watchlist', 'my_avg', 'taste_dir', 'taste_nat', 'taste_genre'],
   title: 'Fit score',
@@ -2749,11 +3573,11 @@ dash.calc('fit', {
   const fmt1 = d3.format('.1f');
   const fint = d3.format(',');
   const blank = (v) => v === '' || v == null;
-  const BASE = { fconts: [], dconts: [], q: '', country: '', nat: '', dir: '', genre: '', type: '', y1: null, y2: null, rt: null, imdb: null };
+  const BASE = { fconts: [], dconts: [], disk: '', q: '', country: '', nat: '', dir: '', genre: '', type: '', y1: null, y2: null, rt: null, imdb: null };
   const P0 = { ...BASE, rated: false, decade: '', sort: 'Fit', desc: true };
   const T0 = { ...BASE, min: null, sort: 'mine', desc: true };
   const ST = { P: { ...P0 }, T: { ...T0 } };
-  let W = [], R = [], fitMap = new Map(), filledP = false, filledT = false, pList = [];
+  let W = [], R = [], diskMap = new Map(), fitMap = new Map(), filledP = false, filledT = false, pList = [];
 
   const prep = (r) => ({
     ...r,
@@ -2792,6 +3616,7 @@ dash.calc('fit', {
     && (S.rt == null || (r.rt != null && r.rt <= S.rt))
     && (S.imdb == null || (r.imdb != null && r.imdb >= S.imdb))
     && (!S.country || r.countries.includes(S.country))
+    && (!S.disk || (S.disk === 'yes') === onDisk(r))
     && (!S.fconts.length || r.conts.some((c) => S.fconts.includes(c)))
     && (!S.dconts.length || r.dconts.some((c) => S.dconts.includes(c)));
   const passP = (r) => { const P = ST.P; return common(r, P)
@@ -2800,7 +3625,11 @@ dash.calc('fit', {
   const passT = (r) => { const T = ST.T; return common(r, T)
     && (T.min == null || (r.mine != null && r.mine >= T.min)); };
 
+  const diskOf = (r) => diskMap.get(r.Const);
+  const onDisk = (r) => String(diskOf(r)?.['In my folders'] || '').startsWith('Yes');
+  const diskCell = (r) => { const d = diskOf(r); const td = cell(d ? d['In my folders'] : '', onDisk(r) ? 'ww-disk-yes' : 'ww-disk-no'); if (d && d.Files) td.title = `${d.Drives}: ${d.Files}`; return td; };
   const sortVal = (r, k) => {
+    if (k === 'disk') return String(diskOf(r)?.['In my folders'] || '');
     if (k === 'Fit') return fitMap.get(r.Const)?.Fit ?? -1;
     if (k === 'Why') return fitMap.get(r.Const)?.Why ?? '';
     if (['Year', 'rt', 'imdb', 'mine'].includes(k)) return r[k] ?? -1;
@@ -2902,7 +3731,7 @@ dash.calc('fit', {
   const syncF = (px, S) => {
     $(`#${px}-q`).value = S.q; $(`#${px}-country`).value = S.country; $(`#${px}-nat`).value = S.nat; $(`#${px}-dir`).value = S.dir;
     $(`#${px}-genre`).value = S.genre; $(`#${px}-type`).value = S.type; $(`#${px}-y1`).value = S.y1 ?? ''; $(`#${px}-y2`).value = S.y2 ?? '';
-    $(`#${px}-rt`).value = S.rt ?? ''; $(`#${px}-imdb`).value = S.imdb ?? '';
+    $(`#${px}-rt`).value = S.rt ?? ''; $(`#${px}-imdb`).value = S.imdb ?? ''; $(`#${px}-disk`).value = S.disk;
   };
   const syncP = () => { syncF('p', ST.P); $('#p-rated').checked = ST.P.rated; };
   const syncT = () => { syncF('t', ST.T); $('#t-min').value = ST.T.min ?? ''; };
@@ -2926,6 +3755,8 @@ dash.calc('fit', {
     W = okW ? Wd.data.map(prep) : [];
     R = okR ? Rd.data.map(prep) : [];
     fitMap = new Map(Fd.status === 'ok' ? Fd.data.map((f) => [f.Const, f]) : []);
+    const Kd = dash.data('disk');
+    diskMap = new Map(Kd.status === 'ok' ? Kd.data.map((d) => [d.Const, d]) : []);
     const P = ST.P, T = ST.T;
 
     if (okW && !filledP) { filledP = true; fillF('p', W); syncP(); }
@@ -2938,8 +3769,8 @@ dash.calc('fit', {
       const f = fitMap.get(r.Const);
       return [titleCell(r), cell(String(r.Year), 'ww-num'), cell(r.Country, 'ww-c-ctry'), cell(r.Directors), cell(r['Director nationality'], 'ww-c-nat'),
         cell(r.Genres, 'ww-hide'), cell(r.rt == null ? '' : String(r.rt), 'ww-num ww-hide'), cell(r.imdb == null ? '' : fmt1(r.imdb), 'ww-num'),
-        cell(f ? fmt1(f.Fit) : '', 'ww-num ww-fitcell'), cell(f ? f.Why : '', 'ww-hide ww-why')];
-    }, 10);
+        diskCell(r), cell(f ? fmt1(f.Fit) : '', 'ww-num ww-fitcell'), cell(f ? f.Why : '', 'ww-hide ww-why')];
+    }, 11);
     const cc = $('#ch-country'), dc = $('#ch-decade');
     if (!okW) { cc.replaceChildren(); dc.replaceChildren(); }
     else {
@@ -2955,7 +3786,7 @@ dash.calc('fit', {
     drawChips('t', okR, R, 'T');
     drawTable('#t-tbl', okR, tList, T, (r) => [titleCell(r), cell(String(r.Year), 'ww-num'), cell(r.Country, 'ww-c-ctry'), cell(r.Directors), cell(r['Director nationality'], 'ww-c-nat'),
       cell(r.Genres, 'ww-hide'), cell(r.rt == null ? '' : String(r.rt), 'ww-num ww-hide'), cell(r.imdb == null ? '' : fmt1(r.imdb), 'ww-num'),
-      cell(r.mine == null ? '' : String(r.mine), 'ww-num ww-rate')], 9);
+      diskCell(r), cell(r.mine == null ? '' : String(r.mine), 'ww-num ww-rate')], 10);
     const tc = $('#t-count');
     if (okR) {
       tc.classList.remove('dash-skeleton');
@@ -3001,7 +3832,7 @@ dash.calc('fit', {
         const top = [...pList].sort((a, b) => (fitMap.get(b.Const)?.Fit ?? 0) - (fitMap.get(a.Const)?.Fit ?? 0))[0];
         const tf = top && fitMap.get(top.Const);
         take.textContent = pList.length
-          ? `${fint(pList.length)} of ${fint(W.length)} watchlist titles match.` + (tf ? ` Best fit for Paris: ${top.Title} (${top.Year}), ${fmt1(tf.Fit)}.` : '')
+          ? `${fint(pList.length)} of ${fint(W.length)} watchlist titles match` + (diskMap.size ? `, ${fint(pList.filter(onDisk).length)} of them in your folders.` : '.') + (tf ? ` Best fit for Paris: ${top.Title} (${top.Year}), ${fmt1(tf.Fit)}.` : '')
           : `None of the ${fint(W.length)} watchlist titles match these filters.`;
       }
     } else {
@@ -3018,16 +3849,16 @@ dash.calc('fit', {
 
   // picker
   $('#pick-btn').addEventListener('click', () => {
-    const list = [...pList].sort((a, b) => (fitMap.get(b.Const)?.Fit ?? 0) - (fitMap.get(a.Const)?.Fit ?? 0));
+    const list = [...pList].filter((r) => !$('#pick-disk').checked || onDisk(r)).sort((a, b) => (fitMap.get(b.Const)?.Fit ?? 0) - (fitMap.get(a.Const)?.Fit ?? 0));
     const out = $('#pick-out');
     out.hidden = false;
-    if (!list.length) { $('#pick-title').textContent = 'Nothing matches the filters.'; $('#pick-title').removeAttribute('href'); $('#pick-meta').textContent = ''; $('#pick-fit').textContent = ''; return; }
+    if (!list.length) { $('#pick-title').textContent = $('#pick-disk').checked ? 'None of the matching films are in your folders.' : 'Nothing matches the filters.'; $('#pick-title').removeAttribute('href'); $('#pick-meta').textContent = ''; $('#pick-fit').textContent = ''; return; }
     const pool = list.slice(0, Math.max(5, Math.ceil(list.length * 0.2)));
     const r = pool[Math.floor(Math.random() * pool.length)];
     const f = fitMap.get(r.Const);
     $('#pick-title').textContent = `${r.Title} (${r.Year})`;
     $('#pick-title').href = r.URL;
-    $('#pick-meta').textContent = [r.Directors && `${r.Directors}${r['Director nationality'] ? ' · ' + r['Director nationality'] : ''}`, r.Country, r.Genres, r.rt != null ? `${r.rt} min` : '', r.imdb != null ? `IMDb ${fmt1(r.imdb)}` : ''].filter(Boolean).join('  ·  ');
+    $('#pick-meta').textContent = [r.Directors && `${r.Directors}${r['Director nationality'] ? ' · ' + r['Director nationality'] : ''}`, r.Country, r.Genres, r.rt != null ? `${r.rt} min` : '', r.imdb != null ? `IMDb ${fmt1(r.imdb)}` : '', onDisk(r) ? `In your folders (${diskOf(r)['In my folders'].replace('Yes · ', '')})` : ''].filter(Boolean).join('  ·  ');
     $('#pick-fit').textContent = f ? `Fit ${fmt1(f.Fit)}${f.Why ? ' — ' + f.Why.replace("You've rated", 'Paris has rated') : ''}` : '';
   });
 
@@ -3045,6 +3876,7 @@ dash.calc('fit', {
     bind(`#${px}-y2`, 'input', (t) => { ST[key].y2 = num(t.value); });
     bind(`#${px}-rt`, 'input', (t) => { ST[key].rt = num(t.value); });
     bind(`#${px}-imdb`, 'input', (t) => { ST[key].imdb = num(t.value); });
+    bind(`#${px}-disk`, 'change', (t) => { ST[key].disk = t.value; });
   }
   bind('#p-rated', 'change', (t) => { ST.P.rated = t.checked; });
   bind('#t-min', 'change', (t) => { ST.T.min = num(t.value); });
