@@ -114,6 +114,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
 .ww-rate{font-weight:var(--cds-font-weight-medium)}
 .ww-disk-yes{color:var(--color-ok);white-space:nowrap}
 .ww-disk-no{color:var(--color-fg-muted)}
+.ww-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,11rem),1fr));gap:var(--cds-gap-sm)}
+.ww-kpi{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:2px;padding:var(--cds-pad-md);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);background:var(--color-bg);min-width:0}
+button.ww-kpi{cursor:pointer}
+button.ww-kpi:hover{border-color:var(--color-fg-muted)}
+.ww-kpi.ww-on{border-color:var(--color-fg);box-shadow:inset 0 0 0 1px var(--color-fg)}
+.ww-kpi-lab{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.ww-kpi-val{font-family:var(--font-anthropic-serif);font-size:1.9rem;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--color-fg)}
+.ww-kpi-sub{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.ww-h3{font-size:var(--cds-font-size-body);font-weight:var(--cds-font-weight-medium);margin:var(--cds-gap-md) 0 var(--cds-gap-xs)}
+.ww-bars.ww-short{min-height:0}
+.ww-cov{display:grid;grid-template-columns:minmax(4rem,6rem) 1fr auto;gap:8px;align-items:center;font-size:var(--cds-font-size-caption);padding:2px 0}
+.ww-cov .ww-trk{height:12px;position:relative;background:var(--color-bg);border-radius:4px}
+.ww-cov .ww-fill{position:absolute;top:0;bottom:0;left:0;border-radius:4px;background:var(--cds-chart-status-critical)}
+.ww-cov .ww-val{font-variant-numeric:tabular-nums;color:var(--color-fg-muted)}
 </style>
 <div class="ww">
   <header id="top">
@@ -157,6 +171,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
         <a class="ww-pick-title" id="pick-title" target="_blank" rel="noopener"></a>
         <div class="ww-meta" id="pick-meta"></div>
         <div id="pick-fit" class="ww-fitbig"></div>
+      </div>
+    </div>
+
+
+    <div class="ww-card" id="p-folders">
+      <h2>Your folders</h2>
+      <p class="ww-note">Counts for the watchlist titles that match the filters above, whatever the “In my folders” and folder choices. Click a tile to filter the list.</p>
+      <div class="ww-kpis dash-skeleton" id="p-kpis" data-source="watchlist disk fit"></div>
+      <div class="ww-grid">
+        <div><h3 class="ww-h3">Which folder they are in</h3><p class="ww-sub">Click a folder to show only its films in the list; click again to clear. A film with copies in two folders counts in both.</p><div class="ww-bars ww-short" id="p-where" data-source="disk"></div></div>
+        <div><h3 class="ww-h3">Share in your folders, by decade</h3><p class="ww-sub">Of the matching watchlist titles from each decade, how many you already have.</p><div class="ww-bars ww-short" id="p-cov" data-source="watchlist disk fit"></div></div>
       </div>
     </div>
 
@@ -226,6 +251,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       <p class="ww-sub">The list follows every filter; the nationality and director charts follow the "Director from" choice.</p>
     </div>
 
+
+    <div class="ww-card" id="t-folders">
+      <h2>Your folders</h2>
+      <p class="ww-note">Counts for the rated titles that match the filters above, whatever the “In my folders” and folder choices. Click a tile to filter the list.</p>
+      <div class="ww-kpis dash-skeleton" id="t-kpis" data-source="ratings disk"></div>
+      <div class="ww-grid">
+        <div><h3 class="ww-h3">Which folder they are in</h3><p class="ww-sub">Click a folder to show only its films in the list; click again to clear. A film with copies in two folders counts in both.</p><div class="ww-bars ww-short" id="t-where" data-source="disk"></div></div>
+        <div><h3 class="ww-h3">Share in your folders, by decade</h3><p class="ww-sub">Of the matching rated titles from each decade, how many you keep.</p><div class="ww-bars ww-short" id="t-cov" data-source="ratings disk"></div></div>
+      </div>
+    </div>
+
     <div class="ww-grid">
       <div class="ww-card" id="t-nat-card">
         <h2>By director nationality</h2>
@@ -266,7 +302,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{ou
       </div>
     </div>
   </section>
-  <footer class="ww-foot">Built from Paris’s IMDb watchlist and the films he has rated, as of 30 October 2026. Countries of production and directors’ nationalities were compiled with Claude; a <span style="color:var(--color-warn)">?</span> marks one that couldn’t be confirmed. “Fit” is an estimate of how Paris would rate a film, based on his past ratings. “In my folders” shows whether a film is in Paris’s own film collection. Titles link to IMDb.</footer>
+  <footer class="ww-foot">Built from Paris’s IMDb watchlist and the films he has rated, as of 3 November 2026. Countries of production and directors’ nationalities were compiled with Claude; a <span style="color:var(--color-warn)">?</span> marks one that couldn’t be confirmed. “Fit” is an estimate of how Paris would rate a film, based on his past ratings. “In my folders” shows whether a film is in Paris’s own film collection. Titles link to IMDb.</footer>
 </div>
 </div>
 <script type="text/csv" id="data-watchlist">
@@ -2666,44 +2702,44 @@ tt0301357,Good Bye Lenin!,Movie,2003,2000s,https://www.imdb.com/title/tt0301357,
 </script>
 <script type="text/csv" id="data-folders">
 Const,In my folders,Folder
-tt0011000,Yes,downloads
-tt0012364,Yes,downloads
+tt0011000,Yes,not seen
+tt0012364,Yes,not seen
 tt0013442,Yes,not seen
 tt0017136,Yes,not seen
 tt0018742,Yes,not seen
 tt0021749,Yes,not seen
-tt0023634,Yes,not seen + downloads
+tt0023634,Yes,not seen
 tt0026778,Yes,not seen
 tt0028772,Yes,not seen
-tt0031885,Yes,not seen + downloads
-tt0035753,Yes,downloads
-tt0036112,Yes,not seen + downloads
+tt0031885,Yes,not seen
+tt0035753,Yes,not seen
+tt0036112,Yes,not seen
 tt0037558,Yes,not seen
-tt0037884,Yes,not seen + downloads
-tt0038823,Yes,not seen + downloads
-tt0038890,Yes,not seen + downloads
-tt0039417,Yes,not seen + downloads
-tt0039822,Yes,not seen + downloads
+tt0037884,Yes,not seen
+tt0038823,Yes,not seen
+tt0038890,Yes,not seen
+tt0039417,Yes,not seen
+tt0039822,Yes,not seen
 tt0040522,Yes,seen + not seen
-tt0040525,Yes,not seen + downloads
-tt0041959,Yes,downloads
-tt0042593,Yes,not seen + downloads
+tt0040525,Yes,not seen
+tt0041959,Yes,not seen
+tt0042593,Yes,not seen
 tt0042876,Yes,not seen
 tt0043014,Yes,not seen
 tt0043313,Yes,not seen
 tt0043511,Yes,not seen
-tt0045793,Yes,downloads
+tt0045793,Yes,not seen
 tt0046438,Yes,not seen
-tt0046478,Yes,not seen + downloads
+tt0046478,Yes,not seen
 tt0046487,Yes,not seen
-tt0047296,Yes,downloads
+tt0047296,Yes,not seen
 tt0048254,Yes,not seen
 tt0048424,Yes,not seen
-tt0048434,Yes,not seen + downloads
-tt0048452,Yes,not seen + downloads
+tt0048434,Yes,not seen
+tt0048452,Yes,not seen
 tt0048473,Yes,not seen
 tt0048956,Yes,not seen
-tt0049012,Yes,not seen + downloads
+tt0049012,Yes,not seen
 tt0049784,Yes,not seen
 tt0049902,Yes,seen
 tt0050083,Yes,not seen
@@ -2712,8 +2748,8 @@ tt0050706,Yes,not seen
 tt0050783,Yes,not seen
 tt0050825,Yes,not seen
 tt0050976,Yes,not seen
-tt0050986,Yes,not seen + downloads
-tt0051378,Yes,not seen + downloads
+tt0050986,Yes,not seen
+tt0051378,Yes,not seen
 tt0051459,Yes,not seen
 tt0052080,Yes,not seen
 tt0052216,Yes,not seen
@@ -2730,16 +2766,17 @@ tt0053604,Yes,seen
 tt0053619,Yes,not seen
 tt0054130,Yes,not seen
 tt0054215,Yes,not seen
-tt0054248,Yes,not seen + downloads
+tt0054248,Yes,not seen
 tt0054331,Yes,seen
 tt0054460,Yes,not seen
-tt0054599,Yes,downloads
+tt0054599,Yes,not seen
 tt0054665,Yes,not seen
 tt0055032,Yes,not seen
-tt0055551,Yes,downloads
+tt0055551,Yes,not seen
 tt0055913,Yes,not seen
-tt0056058,Yes,downloads
+tt0056058,Yes,not seen
 tt0056111,Yes,not seen
+tt0056119,Yes,downloads
 tt0056193,Yes,seen
 tt0056291,Yes,seen
 tt0056512,Yes,not seen
@@ -2747,10 +2784,11 @@ tt0056663,Yes,not seen
 tt0057012,Yes,seen
 tt0057091,Yes,not seen
 tt0057187,Yes,not seen
+tt0057277,Yes,downloads
 tt0057565,Yes,not seen
 tt0057578,Yes,not seen
 tt0057590,Yes,not seen
-tt0057694,Yes,downloads
+tt0057694,Yes,not seen
 tt0057935,Yes,not seen
 tt0058715,Yes,not seen
 tt0058946,Yes,not seen
@@ -2763,14 +2801,16 @@ tt0060107,Yes,seen
 tt0060161,Yes,not seen
 tt0060176,Yes,seen
 tt0060472,Yes,not seen
+tt0060665,Yes,downloads
 tt0060802,Yes,not seen
 tt0060827,Yes,not seen
-tt0061184,Yes,not seen + downloads
+tt0061184,Yes,not seen
+tt0061196,Yes,downloads
 tt0061395,Yes,not seen
 tt0061512,Yes,not seen
 tt0061537,Yes,not seen
 tt0061578,Yes,seen + not seen
-tt0061589,Yes,not seen + downloads
+tt0061589,Yes,not seen
 tt0061781,Yes,seen
 tt0061809,Yes,not seen
 tt0061882,Yes,not seen
@@ -2785,15 +2825,15 @@ tt0063278,Yes,not seen
 tt0063291,Yes,not seen
 tt0063374,Yes,seen
 tt0063415,Yes,seen
-tt0063611,Yes,downloads
-tt0063633,Yes,not seen + downloads
+tt0063611,Yes,not seen
+tt0063633,Yes,not seen
 tt0063850,Yes,not seen
-tt0063876,Yes,downloads
+tt0063876,Yes,not seen
 tt0064106,Yes,not seen
 tt0064115,Yes,not seen
 tt0064541,Yes,seen
 tt0064612,Yes,not seen
-tt0064861,Yes,not seen + downloads
+tt0064861,Yes,not seen
 tt0064921,Yes,not seen
 tt0065234,Yes,seen
 tt0065439,Yes,seen + not seen
@@ -2802,7 +2842,8 @@ tt0065571,Yes,seen
 tt0065724,Yes,not seen
 tt0065772,Yes,not seen
 tt0065867,Yes,not seen
-tt0065889,Yes,downloads
+tt0065889,Yes,not seen
+tt0066421,Yes,not seen
 tt0066773,Yes,seen
 tt0066892,Yes,not seen
 tt0066921,Yes,seen
@@ -2811,7 +2852,7 @@ tt0067959,Yes,not seen
 tt0068361,Yes,not seen
 tt0068375,Yes,not seen
 tt0068569,Yes,seen
-tt0069035,Yes,not seen + downloads
+tt0069035,Yes,not seen
 tt0069293,Yes,not seen
 tt0069400,Yes,not seen
 tt0069687,Yes,seen
@@ -2824,16 +2865,16 @@ tt0070959,Yes,not seen
 tt0071315,Yes,seen
 tt0071487,Yes,not seen
 tt0071585,Yes,not seen
-tt0071733,Yes,downloads
+tt0071733,Yes,not seen + downloads
 tt0071910,Yes,not seen
-tt0072231,Yes,downloads
+tt0072231,Yes,not seen
 tt0072417,Yes,not seen
 tt0072443,Yes,not seen
-tt0072446,Yes,not seen + downloads
+tt0072446,Yes,not seen
 tt0072684,Yes,not seen
 tt0072890,Yes,seen
 tt0072976,Yes,seen
-tt0073152,Yes,downloads
+tt0073152,Yes,not seen
 tt0073540,Yes,not seen
 tt0073580,Yes,not seen
 tt0073800,Yes,not seen
@@ -2843,22 +2884,24 @@ tt0074119,Yes,not seen
 tt0074686,Yes,not seen
 tt0074749,Yes,seen
 tt0074811,Yes,not seen
-tt0074891,Yes,not seen + downloads
+tt0074891,Yes,not seen
 tt0074896,Yes,not seen
 tt0075040,Yes,not seen
-tt0075404,Yes,not seen + downloads
+tt0075404,Yes,not seen
 tt0075467,Yes,not seen
-tt0075612,Yes,not seen + downloads
+tt0075612,Yes,not seen
 tt0075675,Yes,seen
 tt0075902,Yes,not seen
 tt0076085,Yes,seen
+tt0076299,Yes,not seen
 tt0076391,Yes,not seen
 tt0076452,Yes,not seen
 tt0077613,Yes,not seen
 tt0078754,Yes,not seen
 tt0078788,Yes,seen
 tt0078841,Yes,not seen
-tt0078875,Yes,downloads
+tt0078875,Yes,not seen
+tt0079010,Yes,downloads
 tt0079095,Yes,not seen
 tt0079522,Yes,not seen
 tt0079944,Yes,not seen
@@ -2871,6 +2914,7 @@ tt0081505,Yes,not seen
 tt0082081,Yes,not seen
 tt0082269,Yes,not seen
 tt0082671,Yes,not seen
+tt0082678,Yes,not seen
 tt0082736,Yes,not seen
 tt0082783,Yes,not seen
 tt0082979,Yes,not seen
@@ -2878,8 +2922,10 @@ tt0083089,Yes,not seen
 tt0083549,Yes,not seen
 tt0083658,Yes,seen
 tt0083851,Yes,not seen
+tt0083866,Yes,downloads
 tt0084302,Yes,not seen
 tt0084361,Yes,not seen
+tt0084390,Yes,downloads
 tt0084549,Yes,not seen
 tt0084654,Yes,not seen
 tt0084725,Yes,seen
@@ -2891,6 +2937,7 @@ tt0085859,Yes,not seen
 tt0086022,Yes,not seen
 tt0086216,Yes,not seen
 tt0086510,Yes,seen
+tt0087553,Yes,downloads
 tt0087821,Yes,not seen
 tt0087884,Yes,seen
 tt0088846,Yes,not seen
@@ -2901,6 +2948,7 @@ tt0090095,Yes,not seen
 tt0090756,Yes,not seen
 tt0091251,Yes,seen
 tt0091364,Yes,not seen
+tt0091406,Yes,not seen
 tt0091578,Yes,not seen
 tt0091670,Yes,not seen
 tt0091830,Yes,not seen
@@ -2908,7 +2956,7 @@ tt0091954,Yes,not seen
 tt0092048,Yes,not seen
 tt0092149,Yes,not seen
 tt0092337,Yes,not seen
-tt0092593,Yes,not seen + downloads
+tt0092593,Yes,not seen
 tt0092637,Yes,not seen
 tt0093058,Yes,seen
 tt0093105,Yes,not seen
@@ -2938,6 +2986,7 @@ tt0097165,Yes,seen
 tt0097216,Yes,not seen
 tt0097223,Yes,not seen
 tt0097561,Yes,seen
+tt0098240,Yes,not seen
 tt0098327,Yes,seen
 tt0098532,Yes,not seen
 tt0099040,Yes,not seen
@@ -2948,6 +2997,7 @@ tt0100024,Yes,not seen
 tt0100491,Yes,not seen
 tt0101258,Yes,not seen
 tt0101410,Yes,not seen
+tt0101700,Yes,downloads
 tt0101898,Yes,not seen
 tt0101985,Yes,not seen
 tt0102443,Yes,not seen
@@ -2975,12 +3025,13 @@ tt0107822,Yes,not seen
 tt0107920,Yes,not seen
 tt0107943,Yes,not seen
 tt0108122,Yes,seen + not seen
-tt0109020,Yes,not seen + downloads
+tt0109020,Yes,not seen
 tt0109348,Yes,not seen
 tt0109424,Yes,seen
 tt0109508,Yes,not seen
 tt0109579,Yes,not seen
 tt0110057,Yes,seen
+tt0110081,Yes,downloads
 tt0110296,Yes,not seen
 tt0110361,Yes,not seen
 tt0110877,Yes,seen
@@ -3003,9 +3054,10 @@ tt0115940,Yes,not seen
 tt0116041,Yes,seen
 tt0116231,Yes,seen
 tt0116282,Yes,seen
+tt0116754,Yes,downloads
 tt0116767,Yes,not seen
 tt0116922,Yes,not seen
-tt0117398,Yes,downloads
+tt0117398,Yes,not seen
 tt0117589,Yes,not seen
 tt0117771,Yes,seen
 tt0117802,Yes,not seen
@@ -3061,11 +3113,13 @@ tt0157016,Yes,not seen
 tt0165078,Yes,seen
 tt0166896,Yes,not seen
 tt0167400,Yes,not seen
+tt0168446,Yes,downloads
 tt0171433,Yes,not seen
 tt0171685,Yes,not seen
 tt0177507,Yes,seen
 tt0177858,Yes,not seen
 tt0180093,Yes,seen
+tt0187664,Yes,downloads
 tt0188674,Yes,seen
 tt0194314,Yes,not seen
 tt0203119,Yes,not seen
@@ -3077,12 +3131,13 @@ tt0212826,Yes,not seen
 tt0216625,Yes,not seen
 tt0221073,Yes,not seen
 tt0238883,Yes,seen
+tt0239388,Yes,not seen
 tt0240419,Yes,not seen
 tt0240913,Yes,not seen
 tt0243133,Yes,seen
 tt0244316,Yes,not seen
 tt0245574,Yes,seen
-tt0245929,Yes,downloads
+tt0245929,Yes,not seen + downloads
 tt0246677,Yes,not seen
 tt0247199,Yes,not seen
 tt0247586,Yes,seen
@@ -3090,22 +3145,26 @@ tt0249241,Yes,not seen
 tt0250258,Yes,seen
 tt0250797,Yes,seen
 tt0254463,Yes,not seen
-tt0255094,Yes,not seen
+tt0255094,Yes,not seen + downloads
 tt0256103,Yes,seen
-tt0258885,Yes,downloads
+tt0258885,Yes,not seen
 tt0265343,Yes,not seen
-tt0268380,Yes,not seen
+tt0268126,Yes,downloads
+tt0268896,Yes,downloads
 tt0272338,Yes,not seen
 tt0274309,Yes,seen
 tt0274428,Yes,not seen
 tt0276751,Yes,seen
 tt0276919,Yes,seen
 tt0283283,Yes,not seen
+tt0284363,Yes,downloads
 tt0290002,Yes,seen
 tt0290673,Yes,not seen
+tt0291350,Yes,downloads
 tt0292242,Yes,not seen
 tt0293007,Yes,not seen
 tt0293715,Yes,not seen
+tt0300140,Yes,downloads
 tt0300214,Yes,not seen
 tt0301199,Yes,not seen
 tt0302674,Yes,not seen
@@ -3119,6 +3178,7 @@ tt0318202,Yes,not seen
 tt0318462,Yes,seen
 tt0319769,Yes,not seen
 tt0320042,Yes,seen
+tt0320193,Yes,downloads
 tt0320194,Yes,not seen
 tt0320661,Yes,not seen
 tt0322420,Yes,not seen
@@ -3132,7 +3192,9 @@ tt0342636,Yes,not seen
 tt0342735,Yes,not seen
 tt0343663,Yes,not seen
 tt0343737,Yes,seen
+tt0344510,Yes,downloads
 tt0346094,Yes,seen
+tt0347048,Yes,downloads
 tt0352248,Yes,not seen
 tt0352994,Yes,not seen
 tt0353969,Yes,seen
@@ -3155,6 +3217,7 @@ tt0380366,Yes,seen
 tt0380485,Yes,not seen
 tt0381061,Yes,seen
 tt0381681,Yes,seen
+tt0382898,Yes,not seen
 tt0383028,Yes,not seen
 tt0384116,Yes,not seen
 tt0385017,Yes,seen
@@ -3171,13 +3234,14 @@ tt0418110,Yes,seen
 tt0418763,Yes,not seen
 tt0419262,Yes,seen
 tt0419887,Yes,seen
-tt0420509,Yes,not seen + downloads
+tt0420509,Yes,not seen
 tt0421082,Yes,seen
 tt0421715,Yes,seen
 tt0422720,Yes,not seen
 tt0424227,Yes,not seen
 tt0424237,Yes,not seen
 tt0424434,Yes,seen
+tt0425079,Yes,downloads
 tt0425112,Yes,not seen
 tt0425458,Yes,seen
 tt0427339,Yes,not seen
@@ -3192,9 +3256,11 @@ tt0443844,Yes,not seen
 tt0445620,Yes,not seen
 tt0446750,Yes,not seen
 tt0449059,Yes,not seen
+tt0456912,Yes,downloads
 tt0459242,Yes,seen + not seen
 tt0460989,Yes,seen
 tt0464029,Yes,not seen
+tt0468565,Yes,not seen
 tt0468569,Yes,seen
 tt0469754,Yes,seen
 tt0476643,Yes,not seen
@@ -3205,6 +3271,7 @@ tt0488400,Yes,not seen
 tt0488478,Yes,seen
 tt0488905,Yes,not seen
 tt0494222,Yes,not seen
+tt0498097,Yes,not seen
 tt0498329,Yes,not seen
 tt0499101,Yes,not seen
 tt0758758,Yes,seen
@@ -3216,13 +3283,15 @@ tt0787524,Yes,not seen
 tt0806686,Yes,not seen
 tt0807054,Yes,seen
 tt0808417,Yes,seen
-tt0809951,Yes,not seen
+tt0809407,Yes,downloads
+tt0809951,Yes,not seen + downloads
 tt0825232,Yes,seen + not seen
 tt0827517,Yes,seen
 tt0838221,Yes,seen
 tt0838233,Yes,not seen
 tt0841044,Yes,seen
 tt0845439,Yes,not seen
+tt0851577,Yes,downloads
 tt0853153,Yes,not seen
 tt0855895,Yes,not seen
 tt0870090,Yes,not seen
@@ -3239,11 +3308,12 @@ tt0964517,Yes,seen
 tt0978762,Yes,not seen
 tt0983213,Yes,seen
 tt0986233,Yes,seen
+tt0997246,Yes,downloads
 tt1000769,Yes,not seen
 tt1010048,Yes,seen
 tt1013753,Yes,seen
 tt1022603,Yes,seen
-tt1023114,Yes,not seen + downloads
+tt1023114,Yes,not seen
 tt1024648,Yes,seen
 tt1024964,Yes,not seen
 tt10262648,Yes,seen + not seen
@@ -3252,7 +3322,7 @@ tt10288566,Yes,seen
 tt1032856,Yes,not seen
 tt1037163,Yes,not seen
 tt1038043,Yes,not seen
-tt10452766,Yes,downloads
+tt10452766,Yes,not seen
 tt1049413,Yes,seen
 tt10618286,Yes,not seen
 tt1068646,Yes,not seen
@@ -3267,11 +3337,12 @@ tt1119646,Yes,seen
 tt1120985,Yes,seen
 tt1135952,Yes,not seen
 tt1136608,Yes,seen
+tt11394298,Yes,downloads
 tt1139797,Yes,not seen
 tt1142972,Yes,not seen
 tt1155592,Yes,not seen
 tt11559472,Yes,not seen
-tt1157549,Yes,downloads
+tt1157549,Yes,not seen
 tt1157705,Yes,documentaries
 tt1160419,Yes,not seen
 tt1164999,Yes,not seen
@@ -3279,7 +3350,7 @@ tt1172570,Yes,not seen
 tt1174732,Yes,not seen
 tt1176096,Yes,not seen
 tt11777738,Yes,seen
-tt11777952,Yes,downloads
+tt11777952,Yes,not seen
 tt1178197,Yes,not seen
 tt11813216,Yes,seen
 tt1182345,Yes,not seen
@@ -3315,12 +3386,14 @@ tt1337051,Yes,not seen
 tt1340107,Yes,seen
 tt1340800,Yes,not seen
 tt1343097,Yes,seen
+tt1360860,Yes,downloads
 tt1369667,Yes,not seen
 tt1371155,Yes,not seen
 tt1374985,Yes,not seen
 tt1376717,Yes,not seen
 tt1379182,Yes,seen
 tt1399683,Yes,not seen
+tt14034966,Yes,downloads
 tt1407927,Yes,not seen
 tt1412386,Yes,seen
 tt1422122,Yes,not seen
@@ -3335,6 +3408,7 @@ tt1532503,Yes,not seen
 tt1540133,Yes,seen
 tt1559549,Yes,not seen
 tt1570989,Yes,seen
+tt1588170,Yes,downloads
 tt1590024,Yes,not seen
 tt1590078,Yes,not seen
 tt1596345,Yes,not seen
@@ -3361,12 +3435,14 @@ tt1740047,Yes,not seen
 tt1745787,Yes,seen + not seen
 tt1748122,Yes,seen
 tt1772925,Yes,not seen
+tt1798709,Yes,downloads
 tt1827487,Yes,seen
 tt1832382,Yes,seen
 tt1853728,Yes,seen
-tt1925421,Yes,not seen + downloads
+tt1925421,Yes,not seen
 tt1931533,Yes,seen
 tt1935179,Yes,seen
+tt1954470,Yes,downloads
 tt1961675,Yes,not seen
 tt1964624,Yes,seen + not seen
 tt2005151,Yes,not seen
@@ -3382,13 +3458,14 @@ tt2190367,Yes,seen
 tt2194499,Yes,not seen
 tt2217859,Yes,not seen
 tt2234003,Yes,not seen
-tt2258281,Yes,not seen + downloads
+tt2258281,Yes,not seen
 tt2290397,Yes,not seen
 tt2299954,Yes,not seen
 tt2309788,Yes,not seen
 tt2328922,Yes,not seen
 tt2331143,Yes,not seen
-tt2354205,Yes,downloads
+tt2354205,Yes,not seen
+tt2368749,Yes,downloads
 tt23736044,Yes,not seen
 tt2375605,Yes,not seen
 tt2402927,Yes,seen
@@ -3408,12 +3485,14 @@ tt2692904,Yes,not seen
 tt2741806,Yes,seen
 tt27503384,Yes,seen
 tt2762506,Yes,seen
+tt27907969,Yes,downloads
 tt2800240,Yes,not seen
+tt2852400,Yes,downloads
 tt2852406,Yes,not seen
 tt2915160,Yes,seen
 tt2935476,Yes,not seen
 tt2936884,Yes,not seen
-tt3062880,Yes,downloads
+tt3062880,Yes,not seen
 tt3082854,Yes,seen
 tt3154822,Yes,not seen
 tt3155604,Yes,not seen
@@ -3426,14 +3505,15 @@ tt3521126,Yes,seen
 tt3560686,Yes,seen
 tt3616916,Yes,not seen
 tt3652526,Yes,not seen
+tt36544524,Yes,downloads
 tt3704050,Yes,not seen
 tt3707106,Yes,not seen
 tt3741834,Yes,seen
 tt3767372,Yes,not seen
-tt3774694,Yes,seen + not seen
+tt3774694,Yes,seen
 tt3945988,Yes,seen
 tt4048272,Yes,seen
-tt4226388,Yes,not seen
+tt4285496,Yes,not seen
 tt4374460,Yes,seen
 tt4468740,Yes,not seen
 tt4547938,Yes,not seen
@@ -3441,28 +3521,31 @@ tt4550098,Yes,not seen
 tt4595882,Yes,not seen
 tt4613272,Yes,not seen
 tt4645368,Yes,not seen
-tt4669986,Yes,not seen + downloads
-tt4686844,Yes,downloads
+tt4669986,Yes,not seen
+tt4686844,Yes,not seen
 tt4768776,Yes,not seen
 tt4777584,Yes,not seen
+tt4780662,Yes,not seen
 tt4846232,Yes,not seen
 tt4901306,Yes,not seen
 tt4925292,Yes,not seen
+tt4936450,Yes,downloads
 tt4943594,Yes,not seen
 tt5029608,Yes,not seen
+tt5052448,Yes,downloads
 tt5078214,Yes,not seen
 tt5135336,Yes,not seen
 tt5168192,Yes,not seen
 tt5182856,Yes,not seen
 tt5186714,Yes,seen
-tt5204020,Yes,downloads
+tt5204020,Yes,not seen
 tt5213534,Yes,seen
 tt5221584,Yes,seen
 tt5247022,Yes,seen
 tt5311514,Yes,not seen
 tt5439796,Yes,not seen
 tt5463162,Yes,not seen
-tt5618752,Yes,downloads
+tt5618752,Yes,not seen
 tt5639354,Yes,not seen
 tt5642124,Yes,not seen
 tt5649144,Yes,seen
@@ -3480,6 +3563,7 @@ tt6083534,Yes,seen
 tt6121444,Yes,seen
 tt6212478,Yes,not seen
 tt6304162,Yes,seen
+tt6386748,Yes,downloads
 tt6714534,Yes,not seen
 tt6725014,Yes,seen
 tt6725158,Yes,not seen
@@ -3493,13 +3577,15 @@ tt7689964,Yes,not seen
 tt7689966,Yes,not seen
 tt8075192,Yes,seen
 tt8185182,Yes,not seen
+tt8267604,Yes,downloads
 tt8359848,Yes,not seen
 tt8535968,Yes,not seen
 tt8613070,Yes,seen
 tt8946378,Yes,not seen
 tt8963708,Yes,seen
 tt9652782,Yes,not seen
-tt9738784,Yes,downloads
+tt9738784,Yes,not seen
+tt9817070,Yes,downloads
 </script>
 <script>
 /* Stand-in for the Claude dashboard runtime: embedded data, calculated measures, one render. */
@@ -3574,7 +3660,7 @@ dash.calc('disk', {
   fn: (watchlist, ratings, folders) => {
     const F = new Map(folders.map((f) => [f.Const, f]));
     const ids = [...new Set([...watchlist, ...ratings].map((r) => r.Const))];
-    return ids.map((Const) => { const f = F.get(Const); return { Const, 'In my folders': f ? `Yes · ${f.Folder}` : 'No', Drives: f ? (f.Drives || '') : '', Files: f ? (f['File names'] || '') : '' }; });
+    return ids.map((Const) => { const f = F.get(Const); return { Const, 'In my folders': f ? `Yes · ${f.Folder}` : 'No', Drives: f ? f.Drives : '', Files: f ? f['File names'] : '' }; });
   },
 });
 
@@ -3605,7 +3691,7 @@ dash.calc('fit', {
   const fmt1 = d3.format('.1f');
   const fint = d3.format(',');
   const blank = (v) => v === '' || v == null;
-  const BASE = { fconts: [], dconts: [], disk: '', q: '', country: '', nat: '', dir: '', genre: '', type: '', y1: null, y2: null, rt: null, imdb: null };
+  const BASE = { fconts: [], dconts: [], disk: '', folder: '', q: '', country: '', nat: '', dir: '', genre: '', type: '', y1: null, y2: null, rt: null, imdb: null };
   const P0 = { ...BASE, rated: false, decade: '', sort: 'Fit', desc: true };
   const T0 = { ...BASE, min: null, sort: 'mine', desc: true };
   const ST = { P: { ...P0 }, T: { ...T0 } };
@@ -3638,7 +3724,7 @@ dash.calc('fit', {
     sel.value = keep;
   };
 
-  const common = (r, S) => (!S.q || r.hay.includes(S.q))
+  const common = (r, S, nd) => (!S.q || r.hay.includes(S.q))
     && (!S.nat || r.nats.includes(S.nat))
     && (!S.dir || r.Directors.toLowerCase().includes(S.dir.toLowerCase()))
     && (!S.genre || r.genres.includes(S.genre))
@@ -3648,16 +3734,58 @@ dash.calc('fit', {
     && (S.rt == null || (r.rt != null && r.rt <= S.rt))
     && (S.imdb == null || (r.imdb != null && r.imdb >= S.imdb))
     && (!S.country || r.countries.includes(S.country))
-    && (!S.disk || (S.disk === 'yes') === onDisk(r))
+    && (nd || !S.disk || (S.disk === 'yes') === onDisk(r))
+    && (nd || !S.folder || folderParts(r).includes(S.folder))
     && (!S.fconts.length || r.conts.some((c) => S.fconts.includes(c)))
     && (!S.dconts.length || r.dconts.some((c) => S.dconts.includes(c)));
-  const passP = (r) => { const P = ST.P; return common(r, P)
+  const passP = (r, nd) => { const P = ST.P; return common(r, P, nd)
     && (!P.decade || r.Decade === P.decade)
     && (!P.rated || !!fitMap.get(r.Const)?.Why); };
-  const passT = (r) => { const T = ST.T; return common(r, T)
+  const passT = (r, nd) => { const T = ST.T; return common(r, T, nd)
     && (T.min == null || (r.mine != null && r.mine >= T.min)); };
 
   const diskOf = (r) => diskMap.get(r.Const);
+  const folderParts = (r) => { const s = String(diskOf(r)?.['In my folders'] || ''); return s.startsWith('Yes') ? s.replace('Yes · ', '').split(' + ') : []; };
+  const FOLDERS = ['not seen', 'seen', 'downloads', 'documentaries'];
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null);
+  const drawFolders = (px, ok, base, key, sync, extra) => {
+    const kp = $(`#${px}-kpis`), wh = $(`#${px}-where`), cv = $(`#${px}-cov`);
+    if (!ok || !diskMap.size) { kp.replaceChildren(); wh.replaceChildren(); cv.replaceChildren(); return; }
+    kp.classList.remove('dash-skeleton');
+    const S = ST[key], on = base.filter(onDisk), n = base.length;
+    const pct = n ? Math.round(on.length / n * 100) : 0;
+    const setDisk = (v) => () => { S.disk = S.disk === v ? '' : v; S.folder = ''; };
+    const tiles = [
+      { lab: 'In your folders', val: fint(on.length), sub: `${pct}% of ${fint(n)} matching`, on: S.disk === 'yes' && !S.folder, click: setDisk('yes') },
+      { lab: 'Not in your folders', val: fint(n - on.length), sub: `${n ? 100 - pct : 0}% of ${fint(n)} matching`, on: S.disk === 'no', click: setDisk('no') },
+      ...extra(base, on, S),
+    ];
+    kp.replaceChildren(...tiles.map((t) => {
+      const b = document.createElement(t.click ? 'button' : 'div');
+      b.className = 'ww-kpi' + (t.on ? ' ww-on' : '');
+      if (t.click) { b.setAttribute('aria-pressed', t.on ? 'true' : 'false'); b.addEventListener('click', () => { t.click(); sync(); render(); }); }
+      const l = document.createElement('span'); l.className = 'ww-kpi-lab'; l.textContent = t.lab;
+      const v = document.createElement('span'); v.className = 'ww-kpi-val'; v.textContent = t.val;
+      const s = document.createElement('span'); s.className = 'ww-kpi-sub'; s.textContent = t.sub;
+      b.append(l, v, s); return b;
+    }));
+    const fc = counts(on, folderParts);
+    const items = FOLDERS.filter((k) => fc.get(k)).map((k) => ({ key: k, label: cap(k), n: fc.get(k) }));
+    if (items.length) bars(wh, items, S.folder, (k) => { S.folder = S.folder === k ? '' : k; S.disk = ''; sync(); render(); });
+    else wh.replaceChildren(cell('None of the matching titles are in your folders.', 'ww-empty'));
+    const tot = counts(base, (r) => (r.Decade ? [r.Decade] : [])), onc = counts(on, (r) => (r.Decade ? [r.Decade] : []));
+    cv.replaceChildren(...[...tot].sort(byName).map(([d, t]) => {
+      const k = onc.get(d) || 0;
+      const row = document.createElement('div'); row.className = 'ww-cov';
+      const lab = document.createElement('span'); lab.textContent = d;
+      const trk = document.createElement('span'); trk.className = 'ww-trk';
+      const fill = document.createElement('span'); fill.className = 'ww-fill'; fill.style.width = (k / t * 100) + '%';
+      trk.append(fill);
+      const val = document.createElement('span'); val.className = 'ww-val'; val.textContent = `${fint(k)} of ${fint(t)} · ${Math.round(k / t * 100)}%`;
+      row.append(lab, trk, val); return row;
+    }));
+  };
   const onDisk = (r) => String(diskOf(r)?.['In my folders'] || '').startsWith('Yes');
   const diskCell = (r) => { const d = diskOf(r); const td = cell(d ? d['In my folders'] : '', onDisk(r) ? 'ww-disk-yes' : 'ww-disk-no'); if (d && d.Files) td.title = `${d.Drives}: ${d.Files}`; return td; };
   const sortVal = (r, k) => {
@@ -3795,7 +3923,7 @@ dash.calc('fit', {
     if (okR && !filledT) { filledT = true; fillF('t', R); syncT(); }
 
     // ---------- watchlist tab ----------
-    pList = sortList(W.filter(passP), P);
+    pList = sortList(W.filter((r) => passP(r)), P);
     drawChips('p', okW, W, 'P');
     drawTable('#p-tbl', okW, pList, P, (r) => {
       const f = fitMap.get(r.Const);
@@ -3813,12 +3941,32 @@ dash.calc('fit', {
         (k) => { ST.P.decade = ST.P.decade === k ? '' : k; render(); });
     }
 
+    drawFolders('p', okW, W.filter((r) => passP(r, true)), 'P', syncP, (base, on, S) => {
+      const fit = (r) => fitMap.get(r.Const)?.Fit;
+      const strong = on.filter((r) => (fit(r) ?? 0) >= 7.5).length;
+      const seen = on.filter((r) => folderParts(r).includes('seen')).length;
+      const fOn = mean(on.map(fit).filter((x) => x != null)), fOff = mean(base.filter((r) => !onDisk(r)).map(fit).filter((x) => x != null));
+      return [
+        { lab: 'In your folders with Fit 7.5+', val: fint(strong), sub: fOn != null ? `average Fit ${fmt1(fOn)} in your folders, ${fOff != null ? fmt1(fOff) : '—'} elsewhere` : 'strong picks ready to watch' },
+        { lab: 'Already in your “seen” folder', val: fint(seen), sub: 'watched but not rated? Click to list them', on: S.folder === 'seen', click: () => { S.folder = S.folder === 'seen' ? '' : 'seen'; S.disk = ''; } },
+      ];
+    });
+
     // ---------- taste tab ----------
-    const tList = sortList(R.filter(passT), T);
+    const tList = sortList(R.filter((r) => passT(r)), T);
     drawChips('t', okR, R, 'T');
     drawTable('#t-tbl', okR, tList, T, (r) => [titleCell(r), cell(String(r.Year), 'ww-num'), cell(r.Country, 'ww-c-ctry'), cell(r.Directors), cell(r['Director nationality'], 'ww-c-nat'),
       cell(r.Genres, 'ww-hide'), cell(r.rt == null ? '' : String(r.rt), 'ww-num ww-hide'), cell(r.imdb == null ? '' : fmt1(r.imdb), 'ww-num'),
       diskCell(r), cell(r.mine == null ? '' : String(r.mine), 'ww-num ww-rate')], 10);
+    drawFolders('t', okR, R.filter((r) => passT(r, true)), 'T', syncT, (base, on, S) => {
+      const aOn = mean(on.map((r) => r.mine).filter((x) => x != null)), aOff = mean(base.filter((r) => !onDisk(r)).map((r) => r.mine).filter((x) => x != null));
+      const notSeen = on.filter((r) => !folderParts(r).includes('seen')).length;
+      const ns = on.filter((r) => folderParts(r).includes('not seen')).length;
+      return [
+        { lab: 'Paris’s average rating', val: aOn != null ? aOn.toFixed(2) : '—', sub: `for films in your folders, against ${aOff != null ? aOff.toFixed(2) : '—'} for the rest` },
+        { lab: 'Rated, but not in “seen”', val: fint(notSeen), sub: `${fint(ns)} sit in “not seen”: click to list them`, on: S.folder === 'not seen', click: () => { S.folder = S.folder === 'not seen' ? '' : 'not seen'; S.disk = ''; } },
+      ];
+    });
     const tc = $('#t-count');
     if (okR) {
       tc.classList.remove('dash-skeleton');
